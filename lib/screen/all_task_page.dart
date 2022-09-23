@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:todo_app/bloc/get_all_task_bloc/bloc.dart';
-import 'package:todo_app/bloc/get_all_task_bloc/event.dart';
-import 'package:todo_app/bloc/get_all_task_bloc/state.dart';
+import 'package:todo_app/bloc/task_bloc/bloc.dart';
+import 'package:todo_app/bloc/task_bloc/event.dart';
+import 'package:todo_app/bloc/task_bloc/state.dart';
 import 'package:todo_app/screen/add_task_page.dart';
 import 'package:todo_app/screen/read_task_page.dart';
 
@@ -30,12 +30,14 @@ class _AllTaskPageState extends State<AllTaskPage> {
 
   @override
   void initState() {
+    print('QQQQQQQQQQQQQQQQQQQQQQQQQQQq');
+    BlocProvider.of<TasksBloc>(context).add(const GetAllTaskEvent());
     super.initState();
-    BlocProvider.of<GetTasksBloc>(context).add(const GetAllTaskEvent());
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       floatingActionButton: const MyFloatingActionButton(),
@@ -47,35 +49,36 @@ class _AllTaskPageState extends State<AllTaskPage> {
             top: 30
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("All Tasks",
-              style: TextStyle(
-                  fontWeight: FontWeight.w700,
-              fontSize: 16),
-              ),
-          const SizedBox(height: 20,),
-            BlocBuilder<GetTasksBloc, GetTasksState>(
-              builder: (context, state) {
-                if (state.status.isLoading) {
-                  print('11111111111111111111111');
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "All Tasks",
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Expanded(
+              child: BlocBuilder<TasksBloc, TasksState>(
+                builder: (context, state) {
+                  if (state.status.isLoading) {
+                    print('11111111111111111111111');
 
-                  return const Padding(
-                    padding: EdgeInsets.only(top: 300),
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
-                if (state.status.isSuccess) {
-                  print('2222222222222222222222');
+                    return const Padding(
+                      padding: EdgeInsets.only(top: 300),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+                  if (state.status.isSuccess) {
+                    print('2222222222222222222222');
 
-                  var task = state.allTask;
+                    var task = state.allTask;
 
-                  print('^^^^^^^^^^6    ' + task.length.toString());
-
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: task.length,
-                    itemBuilder: ((context, index) => Padding(
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: task.length,
+                      itemBuilder: ((context, index) {
+                        return Padding(
                           padding: const EdgeInsets.only(top: 10),
                           child: Slidable(
                             key: const ValueKey(0),
@@ -92,9 +95,12 @@ class _AllTaskPageState extends State<AllTaskPage> {
                               ],
                             ),
                             child: GestureDetector(
-                              onTap: (){
+                              onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => ReadTaskPage(task: task[index], isChecked: task[index].done,)));
+                                    builder: (context) => ReadTaskPage(
+                                          task: task[index],
+                                          isChecked: task[index].done,
+                                        )));
                               },
                               child: Container(
                                 width: double.infinity,
@@ -125,39 +131,38 @@ class _AllTaskPageState extends State<AllTaskPage> {
                               ),
                             ),
                           ),
-                        )),
-                  );
-                }
-                if (state.status.isError) {
-                  print('333333333333333333333');
-                  return const SizedBox(
-                    height: 500,
-                    child: Center(
-                        child: Text(
-                            '!!برتامه برای اجرا اول نیاز به اینترنت دارد',
-                            style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 19))),
-                  );
-                } else {
-                  print('444444444444444444444444');
-                  return const Padding(
-                    padding: EdgeInsets.only(
-                      top: 300
-                    ),
-                    child: Center(
-                        child: Text('Your app don\'t have internet',
-                            style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 19))),
-                  );
-                }
-              },
+                        );
+                      }),
+                    );
+                  }
+                  if (state.status.isError) {
+                    print('333333333333333333333');
+                    return const SizedBox(
+                      height: 500,
+                      child: Center(
+                          child: Text('Your app don\'t have internet',
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 19))),
+                    );
+                  } else {
+                    print('444444444444444444444444');
+                    return const Padding(
+                      padding: EdgeInsets.only(top: 300),
+                      child: Center(
+                          child: Text('Your app don\'t have internet',
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 19))),
+                    );
+                  }
+                },
+              ),
             )
           ],
-          ),
+        ),
         )
       ),
     );

@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:todo_app/bloc/task_bloc/event.dart';
 import 'package:todo_app/custom_icon/my_flutter_app_icons.dart';
 import 'package:todo_app/model/task_model.dart';
+import 'package:todo_app/screen/all_task_page.dart';
+
+import '../bloc/task_bloc/bloc.dart';
 
 class ReadTaskPage extends StatefulWidget {
 
@@ -51,7 +57,14 @@ class _ReadTaskPageState extends State<ReadTaskPage> {
                 children: [
                   IconButton(
                       onPressed: (){
+                        // final createTask =
+                        // BlocProvider.of<TasksBloc>(context);
+                        // createTask.add(EditTaskEvent(
+                        //     id: task!.id!,
+                        //     done: isChecked!
+                        // ));
                         Navigator.of(context).pop();
+
                       },
                       icon: const Icon(MyFlutterApp.arrow_left_circle,
                         size: 26,)),
@@ -114,7 +127,14 @@ class _ReadTaskPageState extends State<ReadTaskPage> {
                       onChanged: (bool? value) {
                         setState(() {
                           isChecked = value!;
-                          print(isChecked);
+                          final createTask =
+                          BlocProvider.of<TasksBloc>(context);
+                          createTask.add(EditTaskEvent(
+                              id: task!.id!,
+                              done: isChecked!
+                          ));
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => AllTaskPage()));
                         });
                       },
                     )

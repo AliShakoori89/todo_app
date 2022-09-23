@@ -10,7 +10,6 @@ class TaskRepository{
 
   Future<dynamic> getAllTask() async{
     var tasks = await _apiBaseHelper.get('/api/Task/GetAllTasks');
-    print('!!!!!!!!!!!!!!!  '+ tasks.toString());
     return tasks;
   }
 
@@ -18,26 +17,23 @@ class TaskRepository{
 
     var body = jsonEncode({'title': title, 'description': description});
 
-    print('{{{{{{{{{{{{    '+ body);
-
     final response = await _apiBaseHelper.post("/api/Task/CreateTask/", body);
 
-    print('{{{{{{{{{{{{    '+ response);
+    if(response.statusCode == 200 || response.statusCode == 201){
+      return "success";
+    }
+    var parsedJson = json.decode(response.body);
+    String message = parsedJson.values.elementAt(0);
+    return message;
+  }
 
+  Future<String> editTask(int id, bool done) async {
 
+    final response = await _apiBaseHelper.put("/api/Task/ChangeTaskStatus", id , done);
+
+    print(response.toString());
     if (response.statusCode == 200 || response.statusCode == 201) {
-      Get.snackbar(
-        backgroundColor: Colors.green,
-        'successful',
-        'add task successfully',
-      );
       return 'success';
-    }else{
-      Get.snackbar(
-        backgroundColor: Colors.red,
-        'error',
-        'No Internet connection',
-      );
     }
     var parsedJson = json.decode(response.body);
     String message = parsedJson.values.elementAt(0);

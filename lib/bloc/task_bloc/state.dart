@@ -11,9 +11,9 @@ extension GetTaskStateStatusX on GetTaskStateStatus {
   bool get isLoading => this == GetTaskStateStatus.loading;
 }
 
-class GetTasksState extends Equatable {
+class TasksState extends Equatable {
 
-  const GetTasksState({
+  const TasksState({
     this.status = GetTaskStateStatus.initial,
     List<TaskModel>? allTasks,
   }): allTask = allTasks ?? const [];
@@ -25,11 +25,11 @@ class GetTasksState extends Equatable {
   // TODO: implement props
   List<Object> get props => [status, allTask];
 
-  GetTasksState copyWith({
+  TasksState copyWith({
     GetTaskStateStatus? status,
     List<TaskModel>? allTasks
   }) {
-    return GetTasksState(
+    return TasksState(
       status: status ?? this.status,
       allTasks: allTasks ?? allTask,
     );

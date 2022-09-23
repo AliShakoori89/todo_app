@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/bloc/get_all_task_bloc/bloc.dart';
-import 'package:todo_app/bloc/get_all_task_bloc/event.dart';
+import 'package:get/get.dart';
+import 'package:todo_app/bloc/task_bloc/bloc.dart';
+import 'package:todo_app/bloc/task_bloc/event.dart';
+import 'package:todo_app/screen/all_task_page.dart';
 import '../custom_icon/my_flutter_app_icons.dart';
 
 class AddTaskPage extends StatefulWidget {
@@ -15,12 +17,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    BlocProvider.of<GetTasksBloc>(context);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,11 +120,12 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   color: Color.fromRGBO(22, 190, 105, 1))),
                   onPressed: (){
                     final createTask =
-                    BlocProvider.of<GetTasksBloc>(context);
+                    BlocProvider.of<TasksBloc>(context);
                     createTask.add(AddNewTaskEvent(
                       title: titleController.text,
                       description: descriptionController.text
                     ));
+                    Get.to(AllTaskPage());
                   },
                 ),
               )
