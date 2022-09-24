@@ -22,7 +22,7 @@ class TaskRepository{
     var body = jsonEncode({'title': taskModel.title, 'description': taskModel.description});
 
     final response = await _apiBaseHelper.post("/api/Task/CreateTask/", body);
-
+    await _dataBaseHelper.saveTaskToDataBase(taskModel);
     if(response.statusCode == 200 || response.statusCode == 201){
       return "success";
     }

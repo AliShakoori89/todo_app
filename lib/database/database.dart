@@ -36,7 +36,7 @@ class DataBaseHelper{
         '$columnId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'
         '$columnTitle TEXT,'
         '$columnDescription TEXT,'
-        '$columnDone TEXT,'
+        '$columnDone TEXT'
         ')'
     );
   }
