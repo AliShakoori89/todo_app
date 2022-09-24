@@ -31,7 +31,7 @@ class _AllTaskPageState extends State<AllTaskPage> {
   @override
   void initState() {
     print('QQQQQQQQQQQQQQQQQQQQQQQQQQQq');
-    BlocProvider.of<TasksBloc>(context).add(const GetAllTaskEvent());
+    BlocProvider.of<TasksBloc>(context).add(GetAllTaskEvent());
     super.initState();
   }
 
@@ -61,15 +61,12 @@ class _AllTaskPageState extends State<AllTaskPage> {
             Expanded(
               child: BlocBuilder<TasksBloc, TasksState>(
                 builder: (context, state) {
-                  if (state.status.isLoading) {
+                  if (state is TasksIsLoadingState) {
                     print('11111111111111111111111');
 
-                    return const Padding(
-                      padding: EdgeInsets.only(top: 300),
-                      child: Center(child: CircularProgressIndicator()),
-                    );
+                    return const Center(child: CircularProgressIndicator());
                   }
-                  if (state.status.isSuccess) {
+                  if (state is TasksIsLoadedState) {
                     print('2222222222222222222222');
 
                     var task = state.allTask;
@@ -135,7 +132,7 @@ class _AllTaskPageState extends State<AllTaskPage> {
                       }),
                     );
                   }
-                  if (state.status.isError) {
+                  if (state is TasksFailedState) {
                     print('333333333333333333333');
                     return const SizedBox(
                       height: 500,

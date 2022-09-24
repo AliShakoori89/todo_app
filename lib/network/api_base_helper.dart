@@ -49,4 +49,16 @@ class ApiBaseHelper {
       throw FetchDataException('No Internet connection');
     }
   }
+
+  Future<dynamic> delete(String url, int id) async {
+    try {
+      final Uri address = Uri(host: _baseUrl + url);
+      Map<String, String> headers;
+        headers = {'Content-type': 'application/json',};
+      final response = await http.delete(address, headers: headers);
+      return response.statusCode;
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+  }
 }

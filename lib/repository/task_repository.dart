@@ -31,7 +31,18 @@ class TaskRepository{
 
     final response = await _apiBaseHelper.put("/api/Task/ChangeTaskStatus", id , done);
 
-    print(response.toString());
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return 'success';
+    }
+    var parsedJson = json.decode(response.body);
+    String message = parsedJson.values.elementAt(0);
+
+    return message;
+  }
+
+  Future<String> deleteTask(int id) async{
+    final response = await _apiBaseHelper.delete("/api/Task/ChangeTaskStatus", id);
+
     if (response.statusCode == 200 || response.statusCode == 201) {
       return 'success';
     }
