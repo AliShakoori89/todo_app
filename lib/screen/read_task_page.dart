@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:todo_app/bloc/task_bloc/event.dart';
 import 'package:todo_app/custom_icon/my_flutter_app_icons.dart';
 import 'package:todo_app/model/task_model.dart';
 import 'package:todo_app/screen/all_task_page.dart';
-
+import 'package:todo_app/utils/dimensions.dart';
 import '../bloc/task_bloc/bloc.dart';
 
 class ReadTaskPage extends StatefulWidget {
@@ -45,10 +44,10 @@ class _ReadTaskPageState extends State<ReadTaskPage> {
       backgroundColor: Colors.grey[100],
       body: SafeArea(
         child: Container(
-          margin: const EdgeInsets.only(
-              right: 10,
-              left: 10,
-              top: 20
+          margin: EdgeInsets.only(
+              right: Dimensions.paddingWith_10,
+              left: Dimensions.paddingWith_10,
+              top: Dimensions.paddingHeight_20
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,42 +56,35 @@ class _ReadTaskPageState extends State<ReadTaskPage> {
                 children: [
                   IconButton(
                       onPressed: (){
-                        // final createTask =
-                        // BlocProvider.of<TasksBloc>(context);
-                        // createTask.add(EditTaskEvent(
-                        //     id: task!.id!,
-                        //     done: isChecked!
-                        // ));
                         Navigator.of(context).pop();
-
                       },
-                      icon: const Icon(MyFlutterApp.arrow_left_circle,
-                        size: 26,)),
+                      icon: Icon(MyFlutterApp.arrow_left_circle,
+                        size: Dimensions.iconSmallSize,)),
                   Text('${task!.title}',
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        fontSize: 24
+                        fontSize: Dimensions.fontLargeSize
                     ),)
                 ],
               ),
-              const SizedBox(height: 20,),
+              SizedBox(height: Dimensions.paddingHeight_20,),
               Container(
-                margin: const EdgeInsets.only(
-                    right: 10,
-                    left: 10,
+                margin: EdgeInsets.only(
+                    right: Dimensions.paddingWith_10,
+                    left: Dimensions.paddingWith_10,
                 ),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: BorderRadius.circular(Dimensions.smallRadius),
                 ),
                 child: Container(
                   width: double.infinity,
-                  height: 250,
-                  margin: const EdgeInsets.only(
-                    top: 10,
-                    right: 10,
-                    left: 10,
-                    bottom: 10
+                  height: Dimensions.descriptionDetailBoxSize,
+                  margin: EdgeInsets.only(
+                    top: Dimensions.paddingHeight_10,
+                    right: Dimensions.paddingWith_10,
+                    left: Dimensions.paddingWith_10,
+                    bottom: Dimensions.paddingHeight_10
                   ),
                   child: Text("${task!.description}",
                   style: const TextStyle(
@@ -101,23 +93,26 @@ class _ReadTaskPageState extends State<ReadTaskPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20,),
+              SizedBox(height: Dimensions.paddingHeight_20,),
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(5)),
-                margin: const EdgeInsets.only(right: 10, left: 10, top: 20),
+                    borderRadius: BorderRadius.circular(Dimensions.smallRadius)),
+                margin: EdgeInsets.only(
+                    right: Dimensions.paddingWith_10,
+                    left: Dimensions.paddingWith_10,
+                    top: Dimensions.paddingHeight_20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
+                    Padding(
+                      padding: EdgeInsets.only(left: Dimensions.paddingWith_10,),
                       child: Text(
                         "Have You Done This Task?",
                         style: TextStyle(
-                            color: Color.fromRGBO(22, 190, 105, 1),
+                            color: const Color.fromRGBO(22, 190, 105, 1),
                             fontWeight: FontWeight.w700,
-                            fontSize: 14),
+                            fontSize: Dimensions.fontVerySmallSize),
                       ),
                     ),
                     Checkbox(
@@ -134,7 +129,7 @@ class _ReadTaskPageState extends State<ReadTaskPage> {
                               done: isChecked!
                           ));
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => AllTaskPage()));
+                              builder: (context) => const AllTaskPage()));
                         });
                       },
                     )

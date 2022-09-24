@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:todo_app/bloc/task_bloc/bloc.dart';
 import 'package:todo_app/bloc/task_bloc/event.dart';
+import 'package:todo_app/model/task_model.dart';
 import 'package:todo_app/screen/all_task_page.dart';
+import 'package:todo_app/utils/dimensions.dart';
 import '../custom_icon/my_flutter_app_icons.dart';
 
 class AddTaskPage extends StatefulWidget {
@@ -17,17 +18,19 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.grey[100],
       body: SafeArea(
         child: Container(
-          margin: const EdgeInsets.only(
-            right: 10,
-            left: 10,
-            top: 20
+          margin: EdgeInsets.only(
+            right: Dimensions.paddingWith_10,
+            left: Dimensions.paddingWith_10,
+            top: Dimensions.paddingHeight_20
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,94 +41,113 @@ class _AddTaskPageState extends State<AddTaskPage> {
                       onPressed: (){
                         Navigator.of(context).pop();
                       },
-                      icon: const Icon(MyFlutterApp.arrow_left_circle,
-                      size: 26,)),
-                  const Text("Add Task",
+                      icon: Icon(MyFlutterApp.arrow_left_circle,
+                      size: Dimensions.iconSmallSize,)),
+                  Text("Add Task",
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
-                    fontSize: 24
+                    fontSize: Dimensions.fontLargeSize
                   ),)
                 ],
               ),
-              const SizedBox(height: 20,),
+              SizedBox(height: Dimensions.paddingHeight_20,),
               ListTile(
                 title: Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
+                  padding: EdgeInsets.only(bottom: Dimensions.paddingHeight_10),
                   child: Row(
-                    children: const [
+                    children: [
                       Text("Title ",
                         style: TextStyle(
-                          fontSize:14,
+                          fontSize:Dimensions.fontVerySmallSize,
                           fontWeight: FontWeight.w500
                         ),),
                       Text("(Required)",
                       style: TextStyle(
-                        fontSize: 12
+                        fontSize: Dimensions.fontVVerySmallSize
                       ),)
                     ],
                   ),
                 ),
-                subtitle: TextFormField(
-                  controller: titleController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8))),
-                    hintText: 'type your title',
-                    hintStyle: TextStyle(
-                      color: Color.fromRGBO(215, 215, 215, 1)
-                      )
-                    )
-                  ),
+                subtitle: Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: titleController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(Dimensions.middleRadius))),
+                      hintText: 'type your title',
+                      hintStyle: const TextStyle(
+                        color: Color.fromRGBO(215, 215, 215, 1)
+                        ),
+                      errorStyle: TextStyle(
+                        fontSize: Dimensions.fontVVerySmallSize,
+                          fontWeight: FontWeight.w500),
+                      filled: true,
+                      ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return '\u26A0 required';
+                      }
+                      return null;
+                    },
+                    ),
+                ),
               ),
-              const SizedBox(height: 20,),
+              SizedBox(height: Dimensions.paddingHeight_20,),
               ListTile(
-                title: const Padding(
-                  padding: EdgeInsets.only(bottom: 10.0),
+                title: Padding(
+                  padding: EdgeInsets.only(bottom: Dimensions.paddingHeight_10),
                   child: Text("Description ",
                     style: TextStyle(
-                        fontSize:14,
+                        fontSize:Dimensions.fontVerySmallSize,
                         fontWeight: FontWeight.w500
                     ),),
                 ),
                 subtitle: Container(
-                  height: 200,
+                  height: Dimensions.descriptionBoxSize,
                   child: TextFormField(
                     controller: descriptionController,
                       maxLines: 8,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                           border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(8))),
+                              borderRadius: BorderRadius.all(Radius.circular(Dimensions.middleRadius))),
                           hintText: 'type your title',
-                          hintStyle: TextStyle(
+                          hintStyle: const TextStyle(
                               color: Color.fromRGBO(215, 215, 215, 1)
                           )
                       )
                   ),
                 ),
               ),
-              const SizedBox(height: 20,),
+              SizedBox(height: Dimensions.paddingHeight_20,),
               Container(
-                margin: const EdgeInsets.only(
-                    right: 15,
-                    left: 15,
+                margin: EdgeInsets.only(
+                    right: Dimensions.paddingWith_15,
+                    left: Dimensions.paddingWith_15,
                 ),
                 width: double.infinity,
                 child: ElevatedButton(
                   style:  ElevatedButton.styleFrom(
                     elevation: 1,
                       primary: Colors.white),
-                  child: const Text("Submit",
+                  child: Text("Submit",
                   style: TextStyle(fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                  color: Color.fromRGBO(22, 190, 105, 1))),
+                  fontSize: Dimensions.fontSmallSize,
+                  color: const Color.fromRGBO(22, 190, 105, 1))),
                   onPressed: (){
+                    TaskModel task = TaskModel();
+                    if(_formKey.currentState!.validate()){
                     final createTask =
                     BlocProvider.of<TasksBloc>(context);
+                    task.title = titleController.text;
+                    task.description = descriptionController.text;
+                    task.done = false;
                     createTask.add(AddNewTaskEvent(
-                      title: titleController.text,
-                      description: descriptionController.text
+                      taskModel: task
                     ));
-                    Get.to(AllTaskPage());
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const AllTaskPage()));
+                    }
                   },
                 ),
               )

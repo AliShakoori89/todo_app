@@ -6,6 +6,7 @@ import 'package:todo_app/bloc/task_bloc/event.dart';
 import 'package:todo_app/bloc/task_bloc/state.dart';
 import 'package:todo_app/screen/add_task_page.dart';
 import 'package:todo_app/screen/read_task_page.dart';
+import 'package:todo_app/utils/dimensions.dart';
 
 class AllTaskPage extends StatefulWidget {
   const AllTaskPage({Key? key}) : super(key: key);
@@ -30,33 +31,31 @@ class _AllTaskPageState extends State<AllTaskPage> {
 
   @override
   void initState() {
-    print('QQQQQQQQQQQQQQQQQQQQQQQQQQQq');
     BlocProvider.of<TasksBloc>(context).add(GetAllTaskEvent());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.grey[100],
       floatingActionButton: const MyFloatingActionButton(),
       body: SafeArea(
         child: Container(
-          margin: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 30
+          margin: EdgeInsets.only(
+            left: Dimensions.paddingWith_20,
+            right: Dimensions.paddingWith_20,
+            top: Dimensions.paddingHeight_30
           ),
           child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               "All Tasks",
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: Dimensions.fontSmallSize),
             ),
-            const SizedBox(
-              height: 20,
+            SizedBox(
+              height: Dimensions.paddingHeight_20,
             ),
             Expanded(
               child: BlocBuilder<TasksBloc, TasksState>(
@@ -76,7 +75,7 @@ class _AllTaskPageState extends State<AllTaskPage> {
                       itemCount: task.length,
                       itemBuilder: ((context, index) {
                         return Padding(
-                          padding: const EdgeInsets.only(top: 10),
+                          padding: EdgeInsets.only(top: Dimensions.paddingHeight_10),
                           child: Slidable(
                             key: const ValueKey(0),
                             endActionPane: ActionPane(
@@ -84,7 +83,42 @@ class _AllTaskPageState extends State<AllTaskPage> {
                               motion: const ScrollMotion(),
                               children: [
                                 SlidableAction(
-                                  onPressed: doNothing,
+                                  onPressed: (context) => showDialog<String>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.delete,
+                                            color: Colors.red,
+                                            size: Dimensions.iconMiddleSize,
+                                          ),
+                                          SizedBox(height: Dimensions.paddingHeight_40,),
+                                          const Text('Are You Sure?!',
+                                          textAlign: TextAlign.center),
+                                        ],
+                                      ),
+                                      actionsAlignment: MainAxisAlignment.spaceBetween,
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: (){
+                                            final createTask =
+                                            BlocProvider.of<TasksBloc>(context);
+                                            createTask.add(DeleteTaskEvent(id: task[index].id!));
+                                            Navigator.pop(context, 'Delete');
+                                          },
+                                          child: const Text('Delete',
+                                          style: TextStyle(color: Colors.red),),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'Cancel'),
+                                          child: const Text('Cancel',
+                                            style: TextStyle(color: Colors.black),),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                   backgroundColor: const Color(0xFFFE4A49),
                                   foregroundColor: Colors.white,
                                   icon: Icons.delete,
@@ -101,14 +135,15 @@ class _AllTaskPageState extends State<AllTaskPage> {
                               },
                               child: Container(
                                 width: double.infinity,
-                                height: 50,
+                                height: Dimensions.paddingHeight_40,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
+                                  borderRadius: BorderRadius.circular(Dimensions.smallRadius),
                                   color: Colors.white,
                                 ),
                                 child: Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 10, right: 10),
+                                  padding: EdgeInsets.only(
+                                      left: Dimensions.paddingWith_10,
+                                      right: Dimensions.paddingWith_10),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -134,26 +169,20 @@ class _AllTaskPageState extends State<AllTaskPage> {
                   }
                   if (state is TasksFailedState) {
                     print('333333333333333333333');
-                    return const SizedBox(
-                      height: 500,
-                      child: Center(
-                          child: Text('Your app don\'t have internet',
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 19))),
-                    );
+                    return Center(
+                        child: Text('Your app don\'t have internet',
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w700,
+                                fontSize: Dimensions.fontMiddleSize)));
                   } else {
                     print('444444444444444444444444');
-                    return const Padding(
-                      padding: EdgeInsets.only(top: 300),
-                      child: Center(
-                          child: Text('Your app don\'t have internet',
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 19))),
-                    );
+                    return Center(
+                        child: Text('Your app don\'t have internet',
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w700,
+                                fontSize: Dimensions.fontMiddleSize)));
                   }
                 },
               ),
@@ -164,7 +193,9 @@ class _AllTaskPageState extends State<AllTaskPage> {
       ),
     );
   }
-  void doNothing(BuildContext context) {}
+  void doNothing(BuildContext context) {
+
+  }
 }
 
 class MyFloatingActionButton extends StatelessWidget {

@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+import 'package:todo_app/model/task_model.dart';
 
 abstract class TasksEvent{
   @override
@@ -6,15 +6,14 @@ abstract class TasksEvent{
 }
 
 class AddNewTaskEvent extends TasksEvent {
-  final String title;
-  final String? description;
-  final bool? done;
+
+  final TaskModel taskModel;
 
   AddNewTaskEvent(
-      {required this.title, this.description, this.done});
+      {required this.taskModel});
 
   @override
-  List<Object> get props => [title, description!, done!];
+  List<Object> get props => [taskModel];
 }
 
 class EditTaskEvent extends TasksEvent {

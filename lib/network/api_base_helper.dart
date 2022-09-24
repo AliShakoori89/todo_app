@@ -26,7 +26,8 @@ class ApiBaseHelper {
         'successful',
         'add task successfully',
       );
-      return response.statusCode;
+      var responseJson = _returnResponse(response);
+      return responseJson;
 
     } on SocketException {
       Get.snackbar(
@@ -39,26 +40,48 @@ class ApiBaseHelper {
   }
 
   Future<dynamic> put(String url, int id, bool done) async{
+    var responseJson;
     try {
       final response = await http.put(
         Uri.parse("$_baseUrl$url?id=$id&done=$done"),
         headers: { "Content-Type" : "application/json"});
-      return response.statusCode;
 
+      responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
     }
+    return responseJson;
   }
 
   Future<dynamic> delete(String url, int id) async {
+    var apiResponse;
     try {
-      final Uri address = Uri(host: _baseUrl + url);
-      Map<String, String> headers;
-        headers = {'Content-type': 'application/json',};
-      final response = await http.delete(address, headers: headers);
-      return response.statusCode;
+      final response = await http.put(
+          Uri.parse("$_baseUrl$url?id=$id"),
+          headers: { "Content-Type" : "application/json"});
+      apiResponse = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
     }
+    return apiResponse;
   }
+}
+
+http.Response _returnResponse(http.Response response) {
+  return response;
+  // switch (response.statusCode) {
+  //   case 200:
+  //     var responseJson = json.decode(response.body.toString());
+  //     print(responseJson);
+  //     return responseJson;
+  //   case 400:
+  //     throw BadRequestException(response.body.toString());
+  //   case 401:
+  //   case 403:
+  //     throw UnauthorisedException(response.body.toString());
+  //   case 500:
+  //   default:
+  //     throw FetchDataException(
+  //         'Error occured while Communication with Server with StatusCode : ${response.statusCode}');
+  // }
 }
