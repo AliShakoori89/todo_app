@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:todo_app/model/task_model.dart';
 import 'package:todo_app/model/task_model_for_data_base.dart';
 
 class DataBaseHelper{
@@ -44,12 +43,9 @@ class DataBaseHelper{
 
   Future<bool> saveTaskToDataBase(TaskForDataBaseModel taskForDataBaseModel) async {
     var dbServicesItem = await database;
-
-    print(":::: :::::: :::::: ||||||||| ||||||||      "+taskForDataBaseModel.toJson().toString());
     await dbServicesItem.insert (
         table, taskForDataBaseModel.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace);
-    print(true);
     return true;
   }
 
@@ -61,6 +57,7 @@ class DataBaseHelper{
     for (Map<String, dynamic> m in listMap) {
       listServicesDatabase.add(TaskForDataBaseModel.fromJson(m));
     }
+
 
     return listServicesDatabase;
   }

@@ -35,16 +35,17 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         home: BlocBuilder<NetworkBloc, NetworkState>(
           builder: (context, state) {
-            if (state is NetworkFailure) {
-              print('NetworkFailure');
-              return const AllTaskFromDataBasePage();
-            } else if (state is NetworkSuccess) {
+            if (state is NetworkSuccess) {
               print('NetworkSuccess');
               return const AllTaskFromNetPage();
             } else {
-              print("SizedBox.shrink");
+              print('NetworkFailure');
               return const AllTaskFromDataBasePage();
             }
+            // else {
+            //   print("SizedBox.shrink");
+            //   return const AllTaskFromDataBasePage();
+            // }
           },
         ),
         // AllTaskPage()

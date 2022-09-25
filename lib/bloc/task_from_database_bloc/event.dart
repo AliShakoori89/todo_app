@@ -19,13 +19,13 @@ class AddNewTaskEvent extends TaskFromDataBaseEvent {
 
 class EditTaskEvent extends TaskFromDataBaseEvent {
 
-  final TaskModel taskModel;
+  final TaskForDataBaseModel taskForDataBaseModel;
 
   EditTaskEvent(
-      {required this.taskModel});
+      {required this.taskForDataBaseModel});
 
   @override
-  List<Object> get props => [taskModel];
+  List<Object> get props => [taskForDataBaseModel];
 }
 
 class GetAllTaskEvent extends TaskFromDataBaseEvent {

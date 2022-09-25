@@ -3,9 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:todo_app/bloc/task_from_database_bloc/bloc.dart';
 import 'package:todo_app/bloc/task_from_database_bloc/state.dart';
-import 'package:todo_app/model/task_model.dart';
 import 'package:todo_app/screen/add_task_to_server.dart';
-import 'package:todo_app/screen/read_task_page.dart';
+import 'package:todo_app/screen/from_data_base/read_task_from_data_base_page.dart';
 import 'package:todo_app/utils/dimensions.dart';
 
 import '../../bloc/task_from_database_bloc/event.dart';
@@ -41,7 +40,6 @@ class _AllTaskFromDataBasePageState extends State<AllTaskFromDataBasePage>  {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      // floatingActionButton: const MyFloatingActionButton(),
       body: SafeArea(
           child: Container(
             margin: EdgeInsets.only(
@@ -63,15 +61,10 @@ class _AllTaskFromDataBasePageState extends State<AllTaskFromDataBasePage>  {
                   child: BlocBuilder<TaskFromDataBaseBloc, TaskFromDataBaseState>(
                     builder: (context, state) {
                       if (state is TasksIsLoadingState) {
-                        print('1111');
-
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (state is TasksIsLoadedState) {
-                        print('2222');
-
                         var task = state.allTask;
-
                         return ListView.builder(
                           shrinkWrap: true,
                           itemCount: task.length,
@@ -129,17 +122,9 @@ class _AllTaskFromDataBasePageState extends State<AllTaskFromDataBasePage>  {
                                 ),
                                 child: GestureDetector(
                                   onTap: () {
-                                    TaskModel taskModel = TaskModel();
-                                    taskModel.id = task[index].id;
-                                    taskModel.title = task[index].title;
-                                    taskModel.description = task[index].description;
-                                    taskModel.done = task[index].done == "false" ? false : true;
                                     Navigator.of(context).push(MaterialPageRoute(
-                                        builder: (context) => ReadTaskPage(
-                                            task: taskModel,
-                                            isChecked: task[index].done == "false"
-                                                ? false
-                                                : true
+                                        builder: (context) => ReadTaskFromDataBasePage(
+                                            task: task[index]
                                         )));
                                   },
                                   child: Container(
@@ -177,7 +162,6 @@ class _AllTaskFromDataBasePageState extends State<AllTaskFromDataBasePage>  {
                         );
                       }
                       if (state is TasksFailedState) {
-                        print('3333');
                         return Center(
                             child: Text('Your app don\'t have iiiiiiiiinternet',
                                 style: TextStyle(
@@ -185,7 +169,6 @@ class _AllTaskFromDataBasePageState extends State<AllTaskFromDataBasePage>  {
                                     fontWeight: FontWeight.w700,
                                     fontSize: Dimensions.fontMiddleSize)));
                       } else {
-                        print('444');
                         return Center(
                             child: Text('Your app don\'t have internetttttt',
                                 style: TextStyle(

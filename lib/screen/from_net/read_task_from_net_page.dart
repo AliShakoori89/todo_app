@@ -5,26 +5,25 @@ import 'package:todo_app/custom_icon/my_flutter_app_icons.dart';
 import 'package:todo_app/model/task_model.dart';
 import 'package:todo_app/screen/from_net/all_task_from_net_page.dart';
 import 'package:todo_app/utils/dimensions.dart';
+import '../../bloc/task_from_net_bloc/event.dart';
 
-import '../bloc/task_from_net_bloc/event.dart';
-
-class ReadTaskPage extends StatefulWidget {
+class ReadTaskFromNetPage extends StatefulWidget {
 
   TaskModel? task;
   bool? isChecked;
 
-  ReadTaskPage({Key? key, this.task, this.isChecked}): super(key: key);
+  ReadTaskFromNetPage({Key? key, this.task, this.isChecked}): super(key: key);
 
   @override
-  State<ReadTaskPage> createState() => _ReadTaskPageState(task, isChecked);
+  State<ReadTaskFromNetPage> createState() => _ReadTaskFromNetPageState(task, isChecked);
 }
 
-class _ReadTaskPageState extends State<ReadTaskPage> {
+class _ReadTaskFromNetPageState extends State<ReadTaskFromNetPage> {
 
   TaskModel? task;
   bool? isChecked;
 
-  _ReadTaskPageState(this.task, this.isChecked);
+  _ReadTaskFromNetPageState(this.task, this.isChecked);
 
   @override
   Widget build(BuildContext context) {
@@ -123,6 +122,7 @@ class _ReadTaskPageState extends State<ReadTaskPage> {
                       onChanged: (bool? value) {
                         setState(() {
                           isChecked = value!;
+                          task!.done = isChecked;
                           final createTask =
                           BlocProvider.of<TaskFromNetBloc>(context);
                           createTask.add(EditTaskEvent(

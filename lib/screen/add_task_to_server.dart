@@ -144,9 +144,6 @@ class _AddTaskFromNetPageState extends State<AddTaskFromNetPage> {
                     taskModel.done = false;
                     createTask.add(AddNewTaskEvent(
                       taskModel: taskModel
-                      // title: titleController.text,
-                      // description: descriptionController.text,
-                      // done: false
 
                     ));
                     Navigator.of(context).push(MaterialPageRoute(

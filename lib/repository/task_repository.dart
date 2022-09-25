@@ -25,9 +25,11 @@ class TaskRepository{
     final response = await _apiBaseHelper.post("/api/Task/CreateTask/", body);
 
     TaskForDataBaseModel taskForDataBaseModel = TaskForDataBaseModel();
+    taskForDataBaseModel.id = taskModel.id;
     taskForDataBaseModel.title = taskModel.title;
     taskForDataBaseModel.description = taskModel.description;
     taskForDataBaseModel.done = taskModel.done.toString();
+
     await _dataBaseHelper.saveTaskToDataBase(taskForDataBaseModel);
     if(response.statusCode == 200 || response.statusCode == 201){
       return "success";
@@ -39,38 +41,23 @@ class TaskRepository{
 
   Future<String> editTask(TaskModel taskModel) async {
 
-    try {
-      final result = await InternetAddress.lookup('example.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        print('connected');
+    final response = await _apiBaseHelper.put("/api/Task/ChangeTaskStatus", taskModel.id! , taskModel.done!);
 
-        final response = await _apiBaseHelper.put("/api/Task/ChangeTaskStatus", taskModel.id! , taskModel.done!);
+    TaskForDataBaseModel taskForDataBaseModel = TaskForDataBaseModel();
+    taskForDataBaseModel.id = taskModel.id;
+    taskForDataBaseModel.title = taskModel.title;
+    taskForDataBaseModel.description = taskModel.description;
+    taskForDataBaseModel.done = taskModel.done.toString();
 
-        TaskForDataBaseModel taskForDataBaseModel = TaskForDataBaseModel();
-        taskForDataBaseModel.title = taskModel.title;
-        taskForDataBaseModel.description = taskModel.description;
-        taskForDataBaseModel.done = taskModel.done.toString();
-        await _dataBaseHelper.updateTaskStatus(taskForDataBaseModel);
+    await _dataBaseHelper.updateTaskStatus(taskForDataBaseModel);
 
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          return 'success';
-        }
-        var parsedJson = json.decode(response.body);
-        String message = parsedJson.values.elementAt(0);
-
-        return message;
-      }
-    } on SocketException catch (_) {
-      print('not connected');
-
-      TaskForDataBaseModel taskForDataBaseModel = TaskForDataBaseModel();
-      taskForDataBaseModel.title = taskModel.title;
-      taskForDataBaseModel.description = taskModel.description;
-      taskForDataBaseModel.done = taskModel.done.toString();
-      await _dataBaseHelper.updateTaskStatus(taskForDataBaseModel);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return 'success';
     }
+    var parsedJson = json.decode(response.body);
+    String message = parsedJson.values.elementAt(0);
 
-    return "success";
+    return message;
   }
 
   Future<String> deleteTask(int id) async{
@@ -88,12 +75,10 @@ class TaskRepository{
   }
 
   Future<List<TaskForDataBaseModel>> getAllTaskFromDataBase() async {
-    print('AAAAAAAAAAAAAAA   ');
     return await _dataBaseHelper.getAllTasks();
   }
 
   Future<bool> saveTaskToDataBase(TaskForDataBaseModel taskForDataBaseModel) async {
-    print('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT    ');
     return await _dataBaseHelper.saveTaskToDataBase(taskForDataBaseModel);
   }
 

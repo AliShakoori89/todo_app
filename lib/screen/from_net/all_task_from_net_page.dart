@@ -4,9 +4,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:todo_app/bloc/task_from_net_bloc/bloc.dart';
 import 'package:todo_app/bloc/task_from_net_bloc/state.dart';
 import 'package:todo_app/screen/add_task_to_server.dart';
-import 'package:todo_app/screen/read_task_page.dart';
+import 'package:todo_app/screen/from_net/read_task_from_net_page.dart';
 import 'package:todo_app/utils/dimensions.dart';
-
 import '../../bloc/task_from_net_bloc/event.dart';
 
 class AllTaskFromNetPage extends StatefulWidget {
@@ -62,12 +61,9 @@ class _AllTaskFromNetPageState extends State<AllTaskFromNetPage> {
               child: BlocBuilder<TaskFromNetBloc, TaskFromNetState>(
                 builder: (context, state) {
                   if (state is TasksIsLoadingState) {
-                    print('11111111111111111111111');
-
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (state is TasksIsLoadedState) {
-                    print('2222222222222222222222');
 
                     var task = state.allTask;
 
@@ -129,11 +125,9 @@ class _AllTaskFromNetPageState extends State<AllTaskFromNetPage> {
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => ReadTaskPage(
+                                    builder: (context) => ReadTaskFromNetPage(
                                           task: task[index],
-                                          isChecked: task[index].done == "false"
-                                              ? false
-                                              : true
+                                          isChecked: task[index].done
                                         )));
                               },
                               child: Container(
@@ -171,7 +165,6 @@ class _AllTaskFromNetPageState extends State<AllTaskFromNetPage> {
                     );
                   }
                   if (state is TasksFailedState) {
-                    print('333333333333333333333');
                     return Center(
                         child: Text('Yyyyyyyyyour app don\'t have internet',
                             style: TextStyle(
@@ -179,7 +172,6 @@ class _AllTaskFromNetPageState extends State<AllTaskFromNetPage> {
                                 fontWeight: FontWeight.w700,
                                 fontSize: Dimensions.fontMiddleSize)));
                   } else {
-                    print('444444444444444444444444');
                     return Center(
                         child: Text('Yourrrrrrrrrrrrrrrr app don\'t have internet',
                             style: TextStyle(
