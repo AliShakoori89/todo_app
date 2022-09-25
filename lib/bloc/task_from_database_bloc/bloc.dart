@@ -20,20 +20,21 @@ class TaskFromDataBaseBloc extends Bloc<TaskFromDataBaseEvent, TaskFromDataBaseS
     if (event is AddNewTaskEvent) {
       yield TasksIsLoadingState();
       await taskRepository.addTask(event.taskModel);
+      List<TaskForDataBaseModel> allTask = await taskRepository.getAllTaskFromDataBase();
+      yield TasksIsLoadedState(allTask);
     }
 
     if(event is EditTaskEvent){
       yield TasksIsLoadingState();
       await taskRepository.updateTaskToDataBase(event.taskForDataBaseModel);
+      List<TaskForDataBaseModel> allTask = await taskRepository.getAllTaskFromDataBase();
+      yield TasksIsLoadedState(allTask);
     }
     if(event is DeleteTaskEvent){
       yield TasksIsLoadingState();
-      String status = await taskRepository.deleteTask(event.id);
-      if (status.toString() == "Review_Already_exist") {
-        yield TasksFailedState(status);
-      } else {
-        yield TasksIsSucceededState();
-      }
+      await taskRepository.deleteTask(event.id);
+      List<TaskForDataBaseModel> allTask = await taskRepository.getAllTaskFromDataBase();
+      yield TasksIsLoadedState(allTask);
     }
   }
 }

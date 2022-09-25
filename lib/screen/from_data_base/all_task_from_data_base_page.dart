@@ -18,6 +18,8 @@ class AllTaskFromDataBasePage extends StatefulWidget {
 
 class _AllTaskFromDataBasePageState extends State<AllTaskFromDataBasePage>  {
 
+  bool? isChecked;
+
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
       MaterialState.pressed,
@@ -50,165 +52,148 @@ class _AllTaskFromDataBasePageState extends State<AllTaskFromDataBasePage>  {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "All Tasks",
-                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: Dimensions.fontSmallSize),
-                ),
+                pageTitle(),
                 SizedBox(
                   height: Dimensions.paddingHeight_20,
                 ),
-                Expanded(
-                  child: BlocBuilder<TaskFromDataBaseBloc, TaskFromDataBaseState>(
-                    builder: (context, state) {
-                      if (state is TasksIsLoadingState) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if (state is TasksIsLoadedState) {
-                        var task = state.allTask;
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: task.length,
-                          itemBuilder: ((context, index) {
-                            return Padding(
-                              padding: EdgeInsets.only(top: Dimensions.paddingHeight_10),
-                              child: Slidable(
-                                key: const ValueKey(0),
-                                endActionPane: ActionPane(
-                                  extentRatio: 0.2,
-                                  motion: const ScrollMotion(),
-                                  children: [
-                                    SlidableAction(
-                                      onPressed: (context) => showDialog<String>(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Icon(Icons.delete,
-                                                color: Colors.red,
-                                                size: Dimensions.iconMiddleSize,
-                                              ),
-                                              SizedBox(height: Dimensions.paddingHeight_40,),
-                                              const Text('Are You Sure?!',
-                                                  textAlign: TextAlign.center),
-                                            ],
-                                          ),
-                                          actionsAlignment: MainAxisAlignment.spaceBetween,
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: (){
-                                                final createTask =
-                                                BlocProvider.of<TaskFromDataBaseBloc>(context);
-                                                createTask.add(DeleteTaskEvent(id: task[index].id!));
-                                                Navigator.pop(context, 'Delete');
-                                              },
-                                              child: const Text('Delete',
-                                                style: TextStyle(color: Colors.red),),
-                                            ),
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context, 'Cancel'),
-                                              child: const Text('Cancel',
-                                                style: TextStyle(color: Colors.black),),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      backgroundColor: const Color(0xFFFE4A49),
-                                      foregroundColor: Colors.white,
-                                      icon: Icons.delete,
-                                    ),
-                                  ],
-                                ),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(MaterialPageRoute(
-                                        builder: (context) => ReadTaskFromDataBasePage(
-                                            task: task[index]
-                                        )));
-                                  },
-                                  child: Container(
-                                    width: double.infinity,
-                                    height: Dimensions.paddingHeight_40,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(Dimensions.smallRadius),
-                                      color: Colors.white,
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          left: Dimensions.paddingWith_10,
-                                          right: Dimensions.paddingWith_10),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text('${task[index].title}'),
-                                          Checkbox(
-                                            fillColor:
-                                            MaterialStateProperty.resolveWith(
-                                                getColor),
-                                            checkColor: Colors.white,
-                                            value: task[index].done == "false" ? false : true ,
-                                            onChanged: (bool? value) {},
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                        );
-                      }
-                      if (state is TasksFailedState) {
-                        return Center(
-                            child: Text('Your app don\'t have iiiiiiiiinternet',
-                                style: TextStyle(
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: Dimensions.fontMiddleSize)));
-                      } else {
-                        return Center(
-                            child: Text('Your app don\'t have internetttttt',
-                                style: TextStyle(
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: Dimensions.fontMiddleSize)));
-                      }
-                    },
-                  ),
-                )
+                taskCard()
               ],
             ),
           )
       ),
     );
   }
-  void doNothing(BuildContext context) {
 
+  Expanded taskCard() {
+    return Expanded(
+                child: BlocBuilder<TaskFromDataBaseBloc, TaskFromDataBaseState>(
+                  builder: (context, state) {
+                    if (state is TasksIsLoadingState) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (state is TasksIsLoadedState) {
+                      var task = state.allTask;
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: task.length,
+                        itemBuilder: ((context, index) {
+                          return Padding(
+                            padding: EdgeInsets.only(top: Dimensions.paddingHeight_10),
+                            child: Slidable(
+                              key: const ValueKey(0),
+                              endActionPane: ActionPane(
+                                extentRatio: 0.2,
+                                motion: const ScrollMotion(),
+                                children: [
+                                  SlidableAction(
+                                    onPressed: (context) => showDialog<String>(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(Icons.delete,
+                                              color: Colors.red,
+                                              size: Dimensions.iconMiddleSize,
+                                            ),
+                                            SizedBox(height: Dimensions.paddingHeight_40,),
+                                            const Text('Are You Sure?!',
+                                                textAlign: TextAlign.center),
+                                          ],
+                                        ),
+                                        actionsAlignment: MainAxisAlignment.spaceBetween,
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: (){
+                                              final createTask =
+                                              BlocProvider.of<TaskFromDataBaseBloc>(context);
+                                              createTask.add(DeleteTaskEvent(id: task[index].id!));
+                                              Navigator.pop(context, 'Delete');
+                                            },
+                                            child: const Text('Delete',
+                                              style: TextStyle(color: Colors.red),),
+                                          ),
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context, 'Cancel'),
+                                            child: const Text('Cancel',
+                                              style: TextStyle(color: Colors.black),),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    backgroundColor: const Color(0xFFFE4A49),
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.delete,
+                                  ),
+                                ],
+                              ),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => ReadTaskFromDataBasePage(
+                                          task: task[index]
+                                      )));
+                                },
+                                child: Container(
+                                  width: double.infinity,
+                                  height: Dimensions.paddingHeight_40,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(Dimensions.smallRadius),
+                                    color: Colors.white,
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: Dimensions.paddingWith_10,
+                                        right: Dimensions.paddingWith_10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('${task[index].title}'),
+                                        Checkbox(
+                                          fillColor:
+                                          MaterialStateProperty.resolveWith(
+                                              getColor),
+                                          checkColor: Colors.white,
+                                          value: task[index].done == "false" ? false : true ,
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              isChecked = value!;
+                                              task[index].done = isChecked.toString();
+                                              final createTask =
+                                              BlocProvider.of<TaskFromDataBaseBloc>(context);
+                                              createTask.add(EditTaskEvent(
+                                                  taskForDataBaseModel: task[index]
+                                              ));
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                      );
+                    }
+                    if (state is TasksFailedState) {
+                      return Center();
+                    } else {
+                      return Center();
+                    }
+                  },
+                ),
+              );
+  }
+
+  Text pageTitle() {
+    return Text(
+                "All Tasks",
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: Dimensions.fontSmallSize),
+              );
   }
 }
 
-class MyFloatingActionButton extends StatelessWidget {
-  const MyFloatingActionButton({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return FloatingActionButton(
-      heroTag: 'hero',
-      onPressed: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const AddTaskFromNetPage()));
-      },
-      backgroundColor: Colors.white,
-      elevation: 0,
-      child: const Icon(
-        Icons.add,
-        color: Color.fromRGBO(22, 190, 105, 1),
-        size: 30,),
-    );
-  }
-}
