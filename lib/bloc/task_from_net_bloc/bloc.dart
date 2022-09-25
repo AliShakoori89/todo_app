@@ -1,38 +1,34 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/bloc/task_bloc/event.dart';
-import 'package:todo_app/bloc/task_bloc/state.dart';
+import 'package:todo_app/bloc/task_from_net_bloc/event.dart';
+import 'package:todo_app/bloc/task_from_net_bloc/state.dart';
 import 'package:todo_app/model/task_model.dart';
+import 'package:todo_app/network/http_exception.dart';
 import 'package:todo_app/repository/task_repository.dart';
 
-class TasksBloc extends Bloc<TasksEvent, TasksState> {
+class TaskFromNetBloc extends Bloc<TaskFromNetEvent, TaskFromNetState> {
   TaskRepository taskRepository = TaskRepository();
 
-  TasksBloc(this.taskRepository)
+  TaskFromNetBloc(this.taskRepository)
       : super(TasksInitialState());
 
   @override
-  Stream<TasksState> mapEventToState(TasksEvent event) async* {
-    if (event is GetAllTaskEvent) {
+  Stream<TaskFromNetState> mapEventToState(TaskFromNetEvent event) async* {
 
+    if (event is GetAllTaskEvent) {
       try {
-        yield TasksIsLoadingState();
-        final result = await InternetAddress.lookup('example.com');
-        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-          print('connected');
-          final response = await taskRepository.getAllTask();
-          Iterable l = json.decode(response.body);
-          List<TaskModel> allTask = List<TaskModel>.from(l.map((model)=> TaskModel.fromJson(model)));
-          yield TasksIsLoadedState(allTask);
+        final response = await taskRepository.getAllTask();
+        Iterable l = json.decode(response.body);
+        List<TaskModel> allTask = List<TaskModel>.from(l.map((model)=> TaskModel.fromJson(model)));
+        yield TasksIsLoadedState(allTask);
+      } catch (exception) {
+        if (exception is AppException) {
+          yield TasksFailedState('300');
+        } else {
+          yield TasksFailedState('500');
         }
-      } on SocketException catch (_) {
-        // var status = "Task_Already_exist";
-        print('not connected');
-        print('not connected');
-      }
-    }
+      }}
+
     if (event is AddNewTaskEvent) {
       yield TasksIsLoadingState();
       String status = await taskRepository.addTask(event.taskModel);
@@ -42,9 +38,10 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
         yield TasksIsSucceededState();
       }
     }
+
     if(event is EditTaskEvent){
       yield TasksIsLoadingState();
-      String status = await taskRepository.editTask(event.id, event.done);
+      String status = await taskRepository.editTask(event.taskModel);
       if (status.toString() == "Review_Already_exist") {
         yield TasksFailedState(status);
       } else {

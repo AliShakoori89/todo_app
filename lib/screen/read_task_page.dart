@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/bloc/task_bloc/event.dart';
+import 'package:todo_app/bloc/task_from_net_bloc/bloc.dart';
 import 'package:todo_app/custom_icon/my_flutter_app_icons.dart';
 import 'package:todo_app/model/task_model.dart';
-import 'package:todo_app/screen/all_task_page.dart';
+import 'package:todo_app/screen/from_net/all_task_from_net_page.dart';
 import 'package:todo_app/utils/dimensions.dart';
-import '../bloc/task_bloc/bloc.dart';
+
+import '../bloc/task_from_net_bloc/event.dart';
 
 class ReadTaskPage extends StatefulWidget {
 
@@ -118,18 +119,17 @@ class _ReadTaskPageState extends State<ReadTaskPage> {
                     Checkbox(
                       checkColor: Colors.white,
                       fillColor: MaterialStateProperty.resolveWith(getColor),
-                      value: isChecked,
+                      value: task!.done,
                       onChanged: (bool? value) {
                         setState(() {
                           isChecked = value!;
                           final createTask =
-                          BlocProvider.of<TasksBloc>(context);
+                          BlocProvider.of<TaskFromNetBloc>(context);
                           createTask.add(EditTaskEvent(
-                              id: task!.id!,
-                              done: isChecked!
+                              taskModel: task!
                           ));
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const AllTaskPage()));
+                              builder: (context) => const AllTaskFromNetPage()));
                         });
                       },
                     )

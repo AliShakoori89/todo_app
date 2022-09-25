@@ -1,11 +1,11 @@
 import 'package:todo_app/model/task_model.dart';
 
-abstract class TasksEvent{
+abstract class TaskFromNetEvent{
   @override
   List<Object> get props => [];
 }
 
-class AddNewTaskEvent extends TasksEvent {
+class AddNewTaskEvent extends TaskFromNetEvent {
 
   final TaskModel taskModel;
 
@@ -16,23 +16,22 @@ class AddNewTaskEvent extends TasksEvent {
   List<Object> get props => [taskModel];
 }
 
-class EditTaskEvent extends TasksEvent {
+class EditTaskEvent extends TaskFromNetEvent {
 
-  final int id;
-  final bool done;
+  final TaskModel taskModel;
 
   EditTaskEvent(
-      {required this.id, required this.done});
+      {required this.taskModel});
 
   @override
-  List<Object> get props => [id, done];
+  List<Object> get props => [taskModel];
 }
 
-class GetAllTaskEvent extends TasksEvent {
+class GetAllTaskEvent extends TaskFromNetEvent {
   GetAllTaskEvent();
 }
 
-class DeleteTaskEvent extends TasksEvent{
+class DeleteTaskEvent extends TaskFromNetEvent{
   final int id;
 
   DeleteTaskEvent({required this.id});

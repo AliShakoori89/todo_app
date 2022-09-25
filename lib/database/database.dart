@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:todo_app/model/task_model.dart';
+import 'package:todo_app/model/task_model_for_data_base.dart';
 
 class DataBaseHelper{
   DataBaseHelper();
@@ -41,42 +42,37 @@ class DataBaseHelper{
     );
   }
 
-  Future<bool> saveTaskToDataBase(TaskModel taskModel) async {
+  Future<bool> saveTaskToDataBase(TaskForDataBaseModel taskForDataBaseModel) async {
     var dbServicesItem = await database;
 
-    print('CCCCCCCCCCCC    ');
-
+    print(":::: :::::: :::::: ||||||||| ||||||||      "+taskForDataBaseModel.toJson().toString());
     await dbServicesItem.insert (
-        table, taskModel.toJson(),
+        table, taskForDataBaseModel.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace);
-    print('CCCCCCCCCCCC    '+ taskModel.toJson().toString());
+    print(true);
     return true;
   }
 
-  Future<List<TaskModel>> getAllTasks() async {
+  Future<List<TaskForDataBaseModel>> getAllTasks() async {
     var dbTask = await database;
     List listMap = await dbTask
         .rawQuery('SELECT * FROM my_table');
-
-    print('BBBBBBBBBBBBBBB  '+listMap.toString());
-    var listServicesDatabase = <TaskModel>[];
+    var listServicesDatabase = <TaskForDataBaseModel>[];
     for (Map<String, dynamic> m in listMap) {
-      listServicesDatabase.add(TaskModel.fromJson(m));
-      print(m);
+      listServicesDatabase.add(TaskForDataBaseModel.fromJson(m));
     }
+
     return listServicesDatabase;
   }
 
   Future<int> deleteTask(int id) async {
-    print("id is too delete");
-    print(id);
     var myCityDB = await database;
     return await myCityDB.delete("my_table", where: '$columnId = ?', whereArgs: [id]);
   }
 
-  Future<int> updateTaskStatus(TaskModel taskModel) async {
+  Future<int> updateTaskStatus(TaskForDataBaseModel taskForDataBaseModel) async {
     var myCityDB = await database;
-    return await myCityDB.update("my_table", taskModel.toJson(),
-        where: '$columnId = ?', whereArgs: [taskModel.id]);
+    return await myCityDB.update("my_table", taskForDataBaseModel.toJson(),
+        where: '$columnId = ?', whereArgs: [taskForDataBaseModel.id]);
   }
 }

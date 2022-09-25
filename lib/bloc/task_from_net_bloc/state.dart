@@ -1,20 +1,20 @@
 import 'package:equatable/equatable.dart';
 import 'package:todo_app/model/task_model.dart';
 
-abstract class TasksState extends Equatable {
+abstract class TaskFromNetState extends Equatable {
   @override
   List<Object> get props => [];
 }
 
-class TasksInitialState extends TasksState {}
+class TasksInitialState extends TaskFromNetState {}
 
-class TasksError extends TasksState {
+class TasksError extends TaskFromNetState {
   final int errorCode;
 
   TasksError(this.errorCode);
 }
 
-class TasksIsLoadedState extends TasksState {
+class TasksIsLoadedState extends TaskFromNetState {
   final List<TaskModel> _allTasks;
 
   TasksIsLoadedState(this._allTasks);
@@ -25,11 +25,11 @@ class TasksIsLoadedState extends TasksState {
   List<Object> get props => [_allTasks];
 }
 
-class TasksIsLoadingState extends TasksState {}
+class TasksIsLoadingState extends TaskFromNetState {}
 
-class TasksIsSucceededState extends TasksState {}
+class TasksIsSucceededState extends TaskFromNetState {}
 
-class TasksFailedState extends TasksState {
+class TasksFailedState extends TaskFromNetState {
   final String status;
 
   TasksFailedState(this.status);

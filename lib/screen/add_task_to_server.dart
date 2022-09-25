@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/bloc/task_bloc/bloc.dart';
-import 'package:todo_app/bloc/task_bloc/event.dart';
+import 'package:todo_app/bloc/task_from_net_bloc/bloc.dart';
 import 'package:todo_app/model/task_model.dart';
-import 'package:todo_app/screen/all_task_page.dart';
+import 'package:todo_app/screen/from_net/all_task_from_net_page.dart';
 import 'package:todo_app/utils/dimensions.dart';
+import '../bloc/task_from_net_bloc/event.dart';
 import '../custom_icon/my_flutter_app_icons.dart';
 
-class AddTaskPage extends StatefulWidget {
-  const AddTaskPage({Key? key}) : super(key: key);
+class AddTaskFromNetPage extends StatefulWidget {
+  const AddTaskFromNetPage({Key? key}) : super(key: key);
 
   @override
-  State<AddTaskPage> createState() => _AddTaskPageState();
+  State<AddTaskFromNetPage> createState() => _AddTaskFromNetPageState();
 }
 
-class _AddTaskPageState extends State<AddTaskPage> {
+class _AddTaskFromNetPageState extends State<AddTaskFromNetPage> {
 
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
@@ -135,18 +135,22 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   fontSize: Dimensions.fontSmallSize,
                   color: const Color.fromRGBO(22, 190, 105, 1))),
                   onPressed: (){
-                    TaskModel task = TaskModel();
+                    TaskModel taskModel = TaskModel();
                     if(_formKey.currentState!.validate()){
                     final createTask =
-                    BlocProvider.of<TasksBloc>(context);
-                    task.title = titleController.text;
-                    task.description = descriptionController.text;
-                    task.done = false;
+                    BlocProvider.of<TaskFromNetBloc>(context);
+                    taskModel.title = titleController.text;
+                    taskModel.description = descriptionController.text;
+                    taskModel.done = false;
                     createTask.add(AddNewTaskEvent(
-                      taskModel: task
+                      taskModel: taskModel
+                      // title: titleController.text,
+                      // description: descriptionController.text,
+                      // done: false
+
                     ));
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const AllTaskPage()));
+                        builder: (context) => const AllTaskFromNetPage()));
                     }
                   },
                 ),

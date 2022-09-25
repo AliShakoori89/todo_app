@@ -10,7 +10,7 @@ class TaskModel{
     'id': id,
     'title': title,
     'description': description,
-    'doTask': done
+    'done': done
   };
 
   factory TaskModel.fromJson(Map<String, dynamic> json) => TaskModel(

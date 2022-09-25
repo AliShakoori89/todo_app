@@ -1,18 +1,19 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo_app/database/database.dart';
 import 'package:todo_app/model/task_model.dart';
+import 'package:todo_app/model/task_model_for_data_base.dart';
 import 'package:todo_app/network/api_base_helper.dart';
 
 class TaskRepository{
 
-  ApiBaseHelper _apiBaseHelper = ApiBaseHelper();
-  DataBaseHelper _dataBaseHelper = DataBaseHelper();
+  final ApiBaseHelper _apiBaseHelper = ApiBaseHelper();
+  final DataBaseHelper _dataBaseHelper = DataBaseHelper();
 
   Future<dynamic> getAllTask() async{
-
     var tasks = await _apiBaseHelper.get('/api/Task/GetAllTasks');
     return tasks;
   }
@@ -22,7 +23,12 @@ class TaskRepository{
     var body = jsonEncode({'title': taskModel.title, 'description': taskModel.description});
 
     final response = await _apiBaseHelper.post("/api/Task/CreateTask/", body);
-    await _dataBaseHelper.saveTaskToDataBase(taskModel);
+
+    TaskForDataBaseModel taskForDataBaseModel = TaskForDataBaseModel();
+    taskForDataBaseModel.title = taskModel.title;
+    taskForDataBaseModel.description = taskModel.description;
+    taskForDataBaseModel.done = taskModel.done.toString();
+    await _dataBaseHelper.saveTaskToDataBase(taskForDataBaseModel);
     if(response.statusCode == 200 || response.statusCode == 201){
       return "success";
     }
@@ -31,22 +37,47 @@ class TaskRepository{
     return message;
   }
 
-  Future<String> editTask(int id, bool done) async {
+  Future<String> editTask(TaskModel taskModel) async {
 
-    final response = await _apiBaseHelper.put("/api/Task/ChangeTaskStatus", id , done);
+    try {
+      final result = await InternetAddress.lookup('example.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        print('connected');
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return 'success';
+        final response = await _apiBaseHelper.put("/api/Task/ChangeTaskStatus", taskModel.id! , taskModel.done!);
+
+        TaskForDataBaseModel taskForDataBaseModel = TaskForDataBaseModel();
+        taskForDataBaseModel.title = taskModel.title;
+        taskForDataBaseModel.description = taskModel.description;
+        taskForDataBaseModel.done = taskModel.done.toString();
+        await _dataBaseHelper.updateTaskStatus(taskForDataBaseModel);
+
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          return 'success';
+        }
+        var parsedJson = json.decode(response.body);
+        String message = parsedJson.values.elementAt(0);
+
+        return message;
+      }
+    } on SocketException catch (_) {
+      print('not connected');
+
+      TaskForDataBaseModel taskForDataBaseModel = TaskForDataBaseModel();
+      taskForDataBaseModel.title = taskModel.title;
+      taskForDataBaseModel.description = taskModel.description;
+      taskForDataBaseModel.done = taskModel.done.toString();
+      await _dataBaseHelper.updateTaskStatus(taskForDataBaseModel);
     }
-    var parsedJson = json.decode(response.body);
-    String message = parsedJson.values.elementAt(0);
 
-    return message;
+    return "success";
   }
 
   Future<String> deleteTask(int id) async{
     final response = await _apiBaseHelper.delete("/api/Task", id);
 
+    await _dataBaseHelper.deleteTask(id);
+
     if (response.statusCode == 200 || response.statusCode == 201) {
       return 'success';
     }
@@ -56,21 +87,21 @@ class TaskRepository{
     return message;
   }
 
-  // Future<List<TaskModel>> getAllTaskFromDataBase() async {
-  //   print('AAAAAAAAAAAAAAA   ');
-  //   return await _dataBaseHelper.getAllTasks();
-  // }
-  //
-  // Future<bool> saveTaskToDataBaseRepo(TaskModel taskModel) async {
-  //   print('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT    ');
-  //   return await _dataBaseHelper.saveTaskToDataBase(taskModel);
-  // }
-  //
-  // Future updateCityWeatherRepo(TaskModel taskModel) async {
-  //   return await _dataBaseHelper.updateTaskStatus(taskModel);
-  // }
-  //
-  // Future<int> deleteCityWeatherDetailesRepo(int id) async {
-  //   return await _dataBaseHelper.deleteTask(id);
-  // }
+  Future<List<TaskForDataBaseModel>> getAllTaskFromDataBase() async {
+    print('AAAAAAAAAAAAAAA   ');
+    return await _dataBaseHelper.getAllTasks();
+  }
+
+  Future<bool> saveTaskToDataBase(TaskForDataBaseModel taskForDataBaseModel) async {
+    print('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT    ');
+    return await _dataBaseHelper.saveTaskToDataBase(taskForDataBaseModel);
+  }
+
+  Future updateTaskToDataBase(TaskForDataBaseModel taskForDataBaseModel) async {
+    return await _dataBaseHelper.updateTaskStatus(taskForDataBaseModel);
+  }
+
+  Future<int> deleteTaskFromDataBase(int id) async {
+    return await _dataBaseHelper.deleteTask(id);
+  }
 }

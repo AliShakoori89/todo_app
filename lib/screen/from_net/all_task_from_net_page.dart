@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:todo_app/bloc/task_bloc/bloc.dart';
-import 'package:todo_app/bloc/task_bloc/event.dart';
-import 'package:todo_app/bloc/task_bloc/state.dart';
-import 'package:todo_app/screen/add_task_page.dart';
+import 'package:todo_app/bloc/task_from_net_bloc/bloc.dart';
+import 'package:todo_app/bloc/task_from_net_bloc/state.dart';
+import 'package:todo_app/screen/add_task_to_server.dart';
 import 'package:todo_app/screen/read_task_page.dart';
 import 'package:todo_app/utils/dimensions.dart';
 
-class AllTaskPage extends StatefulWidget {
-  const AllTaskPage({Key? key}) : super(key: key);
+import '../../bloc/task_from_net_bloc/event.dart';
+
+class AllTaskFromNetPage extends StatefulWidget {
+  const AllTaskFromNetPage({Key? key}) : super(key: key);
 
   @override
-  State<AllTaskPage> createState() => _AllTaskPageState();
+  State<AllTaskFromNetPage> createState() => _AllTaskFromNetPageState();
 }
 
-class _AllTaskPageState extends State<AllTaskPage> {
+class _AllTaskFromNetPageState extends State<AllTaskFromNetPage> {
 
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
@@ -31,7 +32,7 @@ class _AllTaskPageState extends State<AllTaskPage> {
 
   @override
   void initState() {
-    BlocProvider.of<TasksBloc>(context).add(GetAllTaskEvent());
+    BlocProvider.of<TaskFromNetBloc>(context).add(GetAllTaskEvent());
     super.initState();
   }
 
@@ -58,7 +59,7 @@ class _AllTaskPageState extends State<AllTaskPage> {
               height: Dimensions.paddingHeight_20,
             ),
             Expanded(
-              child: BlocBuilder<TasksBloc, TasksState>(
+              child: BlocBuilder<TaskFromNetBloc, TaskFromNetState>(
                 builder: (context, state) {
                   if (state is TasksIsLoadingState) {
                     print('11111111111111111111111');
@@ -103,7 +104,7 @@ class _AllTaskPageState extends State<AllTaskPage> {
                                         TextButton(
                                           onPressed: (){
                                             final createTask =
-                                            BlocProvider.of<TasksBloc>(context);
+                                            BlocProvider.of<TaskFromNetBloc>(context);
                                             createTask.add(DeleteTaskEvent(id: task[index].id!));
                                             Navigator.pop(context, 'Delete');
                                           },
@@ -130,7 +131,9 @@ class _AllTaskPageState extends State<AllTaskPage> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => ReadTaskPage(
                                           task: task[index],
-                                          isChecked: task[index].done,
+                                          isChecked: task[index].done == "false"
+                                              ? false
+                                              : true
                                         )));
                               },
                               child: Container(
@@ -154,7 +157,7 @@ class _AllTaskPageState extends State<AllTaskPage> {
                                             MaterialStateProperty.resolveWith(
                                                 getColor),
                                         checkColor: Colors.white,
-                                        value: task[index].done,
+                                        value: task[index].done ,
                                         onChanged: (bool? value) {},
                                       )
                                     ],
@@ -170,7 +173,7 @@ class _AllTaskPageState extends State<AllTaskPage> {
                   if (state is TasksFailedState) {
                     print('333333333333333333333');
                     return Center(
-                        child: Text('Your app don\'t have internet',
+                        child: Text('Yyyyyyyyyour app don\'t have internet',
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.w700,
@@ -178,7 +181,7 @@ class _AllTaskPageState extends State<AllTaskPage> {
                   } else {
                     print('444444444444444444444444');
                     return Center(
-                        child: Text('Your app don\'t have internet',
+                        child: Text('Yourrrrrrrrrrrrrrrr app don\'t have internet',
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.w700,
@@ -209,7 +212,7 @@ class MyFloatingActionButton extends StatelessWidget {
       heroTag: 'hero',
       onPressed: () {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const AddTaskPage()));
+            builder: (context) => const AddTaskFromNetPage()));
       },
       backgroundColor: Colors.white,
       elevation: 0,
