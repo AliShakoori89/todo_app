@@ -54,16 +54,17 @@ class ApiBaseHelper {
   }
 
   Future<dynamic> delete(String url, int id) async {
-    var apiResponse;
+    var responseJson;
     try {
-      final response = await http.put(
+      print('${Uri.parse("$_baseUrl$url?id=$id")}');
+      final response = await http.delete(
           Uri.parse("$_baseUrl$url?id=$id"),
           headers: { "Content-Type" : "application/json"});
-      apiResponse = _returnResponse(response);
+      responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
     }
-    return apiResponse;
+    return responseJson;
   }
 }
 

@@ -32,7 +32,7 @@ class TaskFromDataBaseBloc extends Bloc<TaskFromDataBaseEvent, TaskFromDataBaseS
     }
     if(event is DeleteTaskEvent){
       yield TasksIsLoadingState();
-      await taskRepository.deleteTask(event.id);
+      await taskRepository.deleteTaskFromDataBase(event.id);
       List<TaskForDataBaseModel> allTask = await taskRepository.getAllTaskFromDataBase();
       yield TasksIsLoadedState(allTask);
     }

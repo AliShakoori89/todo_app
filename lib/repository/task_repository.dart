@@ -61,10 +61,9 @@ class TaskRepository{
   }
 
   Future<String> deleteTask(int id) async{
+
     final response = await _apiBaseHelper.delete("/api/Task", id);
-
     await _dataBaseHelper.deleteTask(id);
-
     if (response.statusCode == 200 || response.statusCode == 201) {
       return 'success';
     }

@@ -56,6 +56,8 @@ class DataBaseHelper{
     var listServicesDatabase = <TaskForDataBaseModel>[];
     for (Map<String, dynamic> m in listMap) {
       listServicesDatabase.add(TaskForDataBaseModel.fromJson(m));
+
+      print(TaskForDataBaseModel.fromJson(m).id);
     }
 
 

@@ -37,12 +37,8 @@ class TaskFromNetBloc extends Bloc<TaskFromNetEvent, TaskFromNetState> {
       Iterable l = json.decode(response.body);
       List<TaskModel> allTask = List<TaskModel>.from(l.map((model)=> TaskModel.fromJson(model)));
       yield TasksIsLoadedState(allTask);
-      // if (status.toString() == "Review_Already_exist") {
-      //   yield TasksFailedState(status);
-      // } else {
-      //   yield TasksIsSucceededState();
-      // }
     }
+
     if(event is DeleteTaskEvent){
       yield TasksIsLoadingState();
       await taskRepository.deleteTask(event.id);

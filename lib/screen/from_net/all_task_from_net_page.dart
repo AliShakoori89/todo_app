@@ -110,6 +110,7 @@ class _AllTaskFromNetPageState extends State<AllTaskFromNetPage> {
                                           final createTask =
                                           BlocProvider.of<TaskFromNetBloc>(context);
                                           createTask.add(DeleteTaskEvent(id: task[index].id!));
+
                                           Navigator.pop(context, 'Delete');
                                         },
                                         child: const Text('Delete',
